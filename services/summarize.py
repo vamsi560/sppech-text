@@ -1,34 +1,11 @@
 from typing import Optional
-
-import google.generativeai as genai
-
 from config import (
-    configure_gemini_client,
     get_default_models,
-    get_openai_client,
+    configure_gemini_client,
     get_provider,
 )
 from models import ExtractedInfo
-
-
-def _summarize_openai(transcript_text: str, model: str, api_key: Optional[str]) -> str:
-    client = get_openai_client(api_key)
-    system_prompt = (
-        "You are an assistant that summarizes insurance support calls clearly and concisely. "
-        "Write a short, structured summary with: Purpose, Key details (bullets), "
-        "Customer sentiment, and Next steps. Avoid hallucinating."
-    )
-    user_prompt = f"Transcript:\n\n{transcript_text}"
-    resp = client.chat.completions.create(
-        model=model,
-        temperature=0.2,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-    )
-    return resp.choices[0].message.content.strip()
-
+import google.generativeai as genai
 
 def _summarize_gemini(transcript_text: str, model: str, api_key: Optional[str]) -> str:
     configure_gemini_client(api_key)
@@ -44,7 +21,6 @@ def _summarize_gemini(transcript_text: str, model: str, api_key: Optional[str]) 
     )
     return (response.text or "").strip()
 
-
 def summarize_transcript(
     transcript_text: str,
     *,
@@ -57,34 +33,9 @@ def summarize_transcript(
     provider = provider or get_provider()
     models = get_default_models(provider)
     chat_model = model or models["chat_model"]
-
-    if provider == "openai":
-        return _summarize_openai(transcript_text, chat_model, api_key)
-    if provider == "gemini":
-        return _summarize_gemini(transcript_text, chat_model, api_key)
-    raise RuntimeError(f"Unsupported provider '{provider}'")
-
-
-def _extract_openai(transcript_text: str, model: str, api_key: Optional[str]) -> ExtractedInfo:
-    client = get_openai_client(api_key)
-    system_prompt = (
-        "Extract caller details from the transcript. "
-        "Return a JSON object with keys: name, mobile_number, submission_number. "
-        "If unknown, use null. Do not invent details."
-    )
-    user_prompt = f"Transcript:\n\n{transcript_text}"
-    resp = client.chat.completions.create(
-        model=model,
-        temperature=0.0,
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-    )
-    content = resp.choices[0].message.content
-    return ExtractedInfo.model_validate_json(content)
-
+    if provider != "gemini":
+        raise RuntimeError("Only Gemini provider is supported in this deployment.")
+    return _summarize_gemini(transcript_text, chat_model, api_key)
 
 def _extract_gemini(transcript_text: str, model: str, api_key: Optional[str]) -> ExtractedInfo:
     configure_gemini_client(api_key)
@@ -101,7 +52,6 @@ def _extract_gemini(transcript_text: str, model: str, api_key: Optional[str]) ->
     content = response.text or ""
     return ExtractedInfo.model_validate_json(content)
 
-
 def extract_caller_info(
     transcript_text: str,
     *,
@@ -114,14 +64,11 @@ def extract_caller_info(
     provider = provider or get_provider()
     models = get_default_models(provider)
     chat_model = model or models["chat_model"]
+    if provider != "gemini":
+        raise RuntimeError("Only Gemini provider is supported in this deployment.")
     try:
-        if provider == "openai":
-            return _extract_openai(transcript_text, chat_model, api_key)
-        if provider == "gemini":
-            return _extract_gemini(transcript_text, chat_model, api_key)
+        return _extract_gemini(transcript_text, chat_model, api_key)
     except Exception:
-        # Fallback to empty if parsing fails
         return ExtractedInfo()
-    raise RuntimeError(f"Unsupported provider '{provider}'")
 
 

@@ -1,5 +1,5 @@
 # Entry point for Vercel Python Serverless Function
-from flask_app import app as application
+from flask_app import app
 
-# Vercel looks for 'app' or 'application' variable
-# This allows all Flask routes to work as serverless endpoints
+# Vercel looks for 'app' or 'handler' variable
+handler = app

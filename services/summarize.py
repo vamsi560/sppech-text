@@ -5,7 +5,7 @@ from config import (
     get_provider,
 )
 from models import ExtractedInfo
-import google.generativeai as genai
+import google.genai as genai
 
 def _summarize_gemini(transcript_text: str, model: str, api_key: Optional[str]) -> str:
     configure_gemini_client(api_key)
@@ -15,10 +15,10 @@ def _summarize_gemini(transcript_text: str, model: str, api_key: Optional[str]) 
         "Return a short, structured summary with: Purpose, Key details (bullets), "
         "Customer sentiment, Next steps. Avoid hallucinating."
     )
-    response = gemini_model.generate_content(
-        [prompt, f"Transcript:\n\n{transcript_text}"],
-        generation_config={"temperature": 0.2},
-    )
+    response = gemini_model.generate_content([
+        prompt,
+        f"Transcript:\n\n{transcript_text}"
+    ], generation_config=genai.types.GenerationConfig(temperature=0.2))
     return (response.text or "").strip()
 
 def summarize_transcript(
@@ -45,10 +45,10 @@ def _extract_gemini(transcript_text: str, model: str, api_key: Optional[str]) ->
         "Return JSON with keys exactly: name, mobile_number, submission_number. "
         "Use null when unknown. Do not invent details."
     )
-    response = gemini_model.generate_content(
-        [prompt, f"Transcript:\n\n{transcript_text}"],
-        generation_config={"temperature": 0},
-    )
+    response = gemini_model.generate_content([
+        prompt,
+        f"Transcript:\n\n{transcript_text}"
+    ], generation_config=genai.types.GenerationConfig(temperature=0))
     content = response.text or ""
     return ExtractedInfo.model_validate_json(content)
 

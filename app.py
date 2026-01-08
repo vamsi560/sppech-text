@@ -170,7 +170,7 @@ def main() -> None:
         )
 
         st.subheader("3) Outbound Call (Twilio demo)")
-        backend_url = os.getenv("CALL_BACKEND_URL", "http://localhost:5001")
+        backend_url = os.getenv("CALL_BACKEND_URL", "https://sppech-text.onrender.com")
         st.code(f"Backend URL: {backend_url}", language="text")
         to_number = st.text_input("Customer Phone (E.164 format)", value="")
         if st.button("Start Outbound Call via Twilio"):

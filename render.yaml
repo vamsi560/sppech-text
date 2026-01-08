@@ -14,3 +14,18 @@ services:
         value: models/gemini-1.5-flash
       - key: GEMINI_CHAT_MODEL
         value: models/gemini-1.5-flash
+  - type: web
+    name: insurance-gemini-streamlit
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+    plan: free
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: PROVIDER
+        value: gemini
+      - key: GEMINI_TRANSCRIPTION_MODEL
+        value: models/gemini-1.5-flash
+      - key: GEMINI_CHAT_MODEL
+        value: models/gemini-1.5-flash

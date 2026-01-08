@@ -32,6 +32,11 @@ def health() -> Dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/")
+def index():
+    return {"status": "ok", "message": "Insurance Gemini backend is running."}
+
+
 @app.post("/call/start")
 def start_call() -> Response:
     """Start an outbound call via Twilio and record it.

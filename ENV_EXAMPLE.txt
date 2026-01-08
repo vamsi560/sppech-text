@@ -1,0 +1,17 @@
+Copy this file to a new file named ".env" in the project root and fill in your keys.
+
+OPENAI_API_KEY=
+GOOGLE_API_KEY=
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_CALLER_ID=
+PUBLIC_BASE_URL=
+
+# Optional: override default models
+# TRANSCRIPTION_MODEL=gpt-4o-mini-transcribe
+# CHAT_MODEL=gpt-4o-mini
+# GEMINI_TRANSCRIPTION_MODEL=gemini-1.5-flash
+# GEMINI_CHAT_MODEL=gemini-1.5-flash
+# PROVIDER=openai  # or gemini
+
+

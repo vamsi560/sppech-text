@@ -1,0 +1,6 @@
+submission_number,name,mobile_number,policy_type,status,premium,created_at
+SUB-1001,Anita Sharma,9876543210,Auto,Active,12000,2025-11-20
+SUB-1002,Rohit Kumar,9123456780,Health,Pending,18000,2025-12-05
+SUB-1003,Sunita Rao,+91 98123 45678,Property,Closed,25000,2025-10-02
+
+

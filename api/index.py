@@ -1,5 +1,8 @@
-# Entry point for Vercel Python Serverless Function
-from flask_app import app
+from flask import Flask
+app = Flask(__name__)
 
-# Vercel looks for 'app' or 'handler' variable
+@app.route("/")
+def hello():
+    return "Hello from minimal Flask!"
+
 handler = app
